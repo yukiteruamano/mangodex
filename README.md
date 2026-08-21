@@ -1,14 +1,15 @@
 # mangodex
-[![Go Reference](https://pkg.go.dev/badge/github.com/darylhjd/mangodex.svg)](https://pkg.go.dev/github.com/darylhjd/mangodex)
 
 Golang API wrapper for MangaDex v5's MVP API.
 
-Full API documentation is found [here](https://api.mangadex.org/docs.html).
+Full API documentation is found [here](https://api.mangadex.org).
+
+> Fork mantenido de [`darylhjd/mangodex`](https://github.com/darylhjd/mangodex) — proyecto original abandonado.
 
 This branch contains only essential services, such as Manga searching and image downloading.
 
 ## Installation
-To install, do `go get -u github.com/darylhjd/mangodex@essential`.
+To install, do `go get -u github.com/yukiteruamano/mangodex@essential`.
 
 ## Usage
 ```golang
@@ -17,7 +18,7 @@ package main
 import (
 	"fmt"
 	
-	m "github.com/darylhjd/mangodex@simple"
+	m "github.com/yukiteruamano/mangodex@simple"
 )
 
 func main() {
