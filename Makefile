@@ -10,7 +10,7 @@ CGO_ENABLED ?= 1
 LDFLAGS_RELEASE := -trimpath -ldflags="-s -w" -tags netgo -buildmode=pie -pgo=auto
 LDFLAGS_DEBUG := -gcflags="all=-N -l" -race -tags debug,netgo -pgo=auto
 
-.PHONY: help check fmt fmt-check lint vet test cover bench build build-debug build-release pgo govulncheck clean
+.PHONY: help check fmt fmt-check lint vet test cover bench build build-debug build-release pgo govulncheck push push-tags clean
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}'
@@ -67,6 +67,17 @@ pgo: ## Generate default.pgo from bench
 
 govulncheck: ## govulncheck via go tool (Go1.24 tool directive)
 	$(GO) tool govulncheck ./... || go run golang.org/x/vuln/cmd/govulncheck@latest ./...
+
+push: ## Push branch to origin (git push origin main)
+	git push origin main
+
+push-tags: ## Create tag v$(DATE) and push (standard v2026.08.24)
+	@VERSION=v$$(date +%Y.%m.%d); \
+	echo "Creating tag $$VERSION..."; \
+	git tag -a $$VERSION -m "$$VERSION: sync to MangaDx API $$(grep 'version:' api.yaml 2>/dev/null | head -1 || echo v5.13.1)" 2>/dev/null || git tag -a $$VERSION -m "$$VERSION"; \
+	git push origin $$VERSION; \
+	echo "Pushed tag $$VERSION"; \
+	echo "Trigger pkg.go.dev: GOPROXY=proxy.golang.org go get github.com/yukiteruamano/mangodex@$$VERSION || curl -X POST https://proxy.golang.org/fetch/github.com/yukiteruamano/mangodex/@v/$$VERSION"
 
 clean: ## Clean artifacts
 	rm -f coverage.out coverage.html bench.txt $(BIN) cpu.pprof

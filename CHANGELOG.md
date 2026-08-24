@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [20260824-5131] - 2026-08-24
+## [2026.08.24] - 2026-08-24
 
 ### Added
 - 30 READ endpoints to reach 58/58 GET read coverage of MangaDx API 5.13.1 (`https://api.mangadex.org/docs/static/api.yaml`): `get-ping` (`infrastructure.go`), `get-manga-recommendation`, `get-manga-drafts`, `get-manga-id-draft`, `get-manga-id-status` (`manga.go`), `get-list-id-feed`, `get-user-list`, `get-user-id-list`, `get-user-follows-list` (`custom_list.go`), `get-user-follows-group` (`scanlation_group.go`), `get-user-follows-user` (`user.go`), `get-statistics-chapters/groups` (`statistics.go`), `get-manga-chapter-readmarkers-2`, `get-reading-history` (`feed.go`), `get-report-reasons`, `get-reports`, `get-settings*3`, `get-upload-session`, `get-rating`, `get-manga-relation`, `get-list-apiclients`, `get-apiclient`, `get-apiclient-secret`
