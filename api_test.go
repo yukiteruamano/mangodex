@@ -11,30 +11,34 @@ import (
 var client = NewDexClient()
 
 func TestLogin(t *testing.T) {
+	if os.Getenv("USERNAME") == "" || os.Getenv("PASSWORD") == "" {
+		t.Skip("USERNAME/PASSWORD not set, skipping integration test")
+	}
 	err := client.Auth.Login(os.Getenv("USERNAME"), os.Getenv("PASSWORD"))
 	if err != nil {
-		t.Error("Login failed.")
+		t.Fatalf("Login failed: %v", err)
 	}
 	fmt.Printf("%v\n", client)
 }
 
 func TestGetLoggedUser(t *testing.T) {
+	if os.Getenv("USERNAME") == "" {
+		t.Skip("skip without auth")
+	}
 	user, err := client.User.GetLoggedUser()
 	if err != nil {
-		t.Error("Getting user failed.")
+		t.Fatalf("Getting user failed: %v", err)
 	}
 	t.Log(user)
 }
 
 func TestGetMangaList(t *testing.T) {
 	params := url.Values{}
-	params.Set("limit", strconv.Itoa(100))
+	params.Set("limit", strconv.Itoa(5))
 	params.Set("offset", strconv.Itoa(0))
-	// Include Author relationship
 	params.Set("includes[]", AuthorRel)
-	// If it is a search, then we add the search term.
 	_, err := client.Manga.GetMangaList(params)
 	if err != nil {
-		t.Errorf("Getting manga failed: %s\n", err.Error())
+		t.Fatalf("Getting manga failed: %v", err)
 	}
 }

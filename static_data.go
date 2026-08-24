@@ -5,7 +5,7 @@ const (
 	ShonenDemographic string = "shounen"
 	ShoujoDemographic string = "shoujo"
 	JoseiDemographic  string = "josei"
-	SeinenDemograpic  string = "seinen"
+	SeinenDemographic string = "seinen"
 )
 
 // Manga publication status
@@ -34,7 +34,7 @@ const (
 	Porn       string = "pornographic"
 )
 
-// Relationship types. Useful for reference expansions
+// Relationship types
 const (
 	MangaRel           string = "manga"
 	ChapterRel         string = "chapter"
@@ -45,4 +45,18 @@ const (
 	TagRel             string = "tag"
 	UserRel            string = "user"
 	CustomListRel      string = "custom_list"
+)
+
+// Manga ordering options
+const (
+	OrderTitle                 = "title"
+	OrderYear                  = "year"
+	OrderCreatedAt             = "createdAt"
+	OrderUpdatedAt             = "updatedAt"
+	OrderLatestUploadedChapter = "latestUploadedChapter"
+	OrderFollowedCount         = "followedCount"
+	OrderRelevance             = "relevance"
+	OrderRating                = "rating"
+	OrderAsc                   = "asc"
+	OrderDesc                  = "desc"
 )
