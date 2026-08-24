@@ -71,13 +71,19 @@ govulncheck: ## govulncheck via go tool (Go1.24 tool directive)
 push: ## Push branch to origin (git push origin main)
 	git push origin main
 
-push-tags: ## Create tag v$(DATE) and push (standard v2026.08.24)
+push-tags: ## Create tag v$(DATE) and push + auto-trigger pkg.go.dev (standard v2026.08.24)
 	@VERSION=v$$(date +%Y.%m.%d); \
-	echo "Creating tag $$VERSION..."; \
-	git tag -a $$VERSION -m "$$VERSION: sync to MangaDx API $$(grep 'version:' api.yaml 2>/dev/null | head -1 || echo v5.13.1)" 2>/dev/null || git tag -a $$VERSION -m "$$VERSION"; \
+	if git rev-parse $$VERSION >/dev/null 2>&1; then echo "Tag $$VERSION already exists locally"; else echo "Creating tag $$VERSION..."; git tag -a $$VERSION -m "$$VERSION: sync to MangaDx API $$(grep 'version:' api.yaml 2>/dev/null | head -1 || echo v5.13.1)"; fi; \
 	git push origin $$VERSION; \
 	echo "Pushed tag $$VERSION"; \
-	echo "Trigger pkg.go.dev: GOPROXY=proxy.golang.org go get github.com/yukiteruamano/mangodex@$$VERSION || curl -X POST https://proxy.golang.org/fetch/github.com/yukiteruamano/mangodex/@v/$$VERSION"
+	echo "Triggering proxy.golang.org + pkg.go.dev (auto)..."; \
+	TMPDIR=$$(mktemp -d); \
+	( cd $$TMPDIR && go mod init tmp >/dev/null 2>&1; GOPROXY=https://proxy.golang.org,direct go get github.com/yukiteruamano/mangodex@$$VERSION 2>&1 | head -5; ); \
+	rm -rf $$TMPDIR; \
+	sleep 2; \
+	echo "Proxy info:"; curl -s https://proxy.golang.org/github.com/yukiteruamano/mangodex/@v/$$VERSION.info | head -5; \
+	echo "Check pkg.go.dev in ~60s: https://pkg.go.dev/github.com/yukiteruamano/mangodex?tab=versions"; \
+	curl -s https://pkg.go.dev/github.com/yukiteruamano/mangodex?tab=versions | grep -q $$VERSION && echo "pkg.go.dev: $$VERSION visible" || echo "pkg.go.dev: wait ~60s then check"
 
 clean: ## Clean artifacts
 	rm -f coverage.out coverage.html bench.txt $(BIN) cpu.pprof
