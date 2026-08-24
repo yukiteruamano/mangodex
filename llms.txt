@@ -1,0 +1,49 @@
+# mangodex — MangaDx API Go Client
+
+> Go client for MangaDx API v5.13.1 (58 READ endpoints), Go 1.26, toolchain 1.27, PGO/slog, 80% test coverage.
+
+## Docs
+- README: README.md (9 sections, badges, demo)
+- Package: https://pkg.go.dev/github.com/yukiteruamano/mangodex
+- OpenAPI: https://api.mangadex.org/docs/static/api.yaml (v5.13.1, 113 ops, 5 deprecated)
+- Go doc: doc.go (Package mangodex comment)
+- Contributing: CONTRIBUTING.md
+- Changelog: CHANGELOG.md
+
+## Install
+```bash
+go get github.com/yukiteruamano/mangodex@v3
+```
+
+## Usage
+```go
+c := mangodex.NewDexClient()
+list, _ := c.Manga.GetMangaListContext(ctx, url.Values{"title": {"One Piece"}})
+fmt.Println(list.Data[0].GetTitle("en"))
+// Auth
+c.Auth.LoginContext(ctx, "user", "pass")
+// Paginate
+p := mangodex.NewPaginator(func(ctx context.Context, limit, offset int) (*mangodex.ListResponse[mangodex.Manga], error) {
+    return c.Manga.GetMangaListContext(ctx, url.Values{"limit": {fmt.Sprint(limit)}})
+})
+for data, err := range p.All(ctx) { fmt.Println(len(data)) }
+// Images
+ah, _ := c.AtHome.NewMDHomeClientContext(ctx, chapterID, "data", false)
+data, _ := ah.GetChapterPageWithContext(ctx, ah.Pages[0])
+```
+
+## Structure
+- api.go: DexClient, Option WithBaseURL/WithLogger, buildURL, Request, PGO transport
+- manga.go, chapter.go, author.go, cover.go, scanlation_group.go, user.go, custom_list.go, statistics.go, feed.go, at_home.go, auth.go, infrastructure.go, rating.go, report.go, relation.go, settings.go, upload.go, apiclient.go, tag.go, common.go, pagination.go, static_data.go
+- bench_test.go: BenchmarkMangaList, GetLocalString (b.Loop, PGO)
+- doc.go: Package comment for pkg.go.dev
+
+## Testing
+```bash
+go vet ./...
+golangci-lint run ./...
+go test -race -cover -pgo=auto ./...
+```
+
+## License
+MIT — darylhjd, yukiteruamano

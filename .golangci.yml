@@ -24,9 +24,6 @@ linters:
     gosec:
       excludes:
         - G107
-    modernize:
-      exclude:
-        - newexpr
 formatters:
   enable:
     - gofmt
